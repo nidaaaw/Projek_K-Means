@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Proses K-Means{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Proses K-Means</h2>
+
+<p>Berikut adalah proses perhitungan K-Means berdasarkan nilai K = <strong>{{ k }}</strong>.</p>
+
+<hr>
+
+<h4>1. Data Awal</h4>
+<div class="table-responsive">
+    {{ data_asli|safe }}
+</div>
+
+<hr>
+
+<h4>2. Centroid Awal</h4>
+<div class="table-responsive">
+    {{ centroid_awal|safe }}
+</div>
+
+<hr>
+
+<h4>3. Perhitungan Distance (Iterasi 1)</h4>
+<p>Distance dihitung menggunakan rumus Euclidean:</p>
+<code>distance = sqrt( (x - c)^2 + (y - c)^2 + ... )</code>
+
+<div class="table-responsive">
+    {{ distance_table|safe }}
+</div>
+
+<hr>
+
+<h4>4. Centroid Baru (Setelah Iterasi)</h4>
+<div class="table-responsive">
+    {{ centroid_akhir|safe }}
+</div>
+
+<hr>
+
+<h4>5. Hasil Penentuan Cluster</h4>
+<div class="table-responsive">
+    {{ cluster_hasil|safe }}
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+    <h2 class="mb-3">Hasil Clustering (K = {{ k }})</h2>
+
+    <!-- Plot Cluster -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Visualisasi Cluster</div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ cluster_plot }}" class="img-fluid" />
+        </div>
+    </div>
+
+    <!-- Summary Cluster -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">Rata-rata Tiap Cluster</div>
+        <div class="card-body">
+            {{ summary|safe }}
+        </div>
+    </div>
+
+    <!-- Tabel Hasil Clustering -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">Data Hasil Clustering</div>
+        <div class="card-body">
+            {{ hasil_cluster|safe }}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

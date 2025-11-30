@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Menentukan Cluster{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Menentukan Jumlah Cluster</h2>
+<p>Masukkan jumlah cluster yang ingin digunakan dalam proses K-Means.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="number" name="k" class="form-control" placeholder="Jumlah cluster (K)" required min="1">
+    <button class="btn btn-primary mt-3">Simpan</button>
+</form>
+
+{% endblock %}

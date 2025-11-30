@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Optimasi Elbow Method</h2>
+<p>Plot Elbow untuk menentukan K optimal.</p>
+
+<img src="data:image/png;base64,{{ elbow_plot }}" class="img-fluid" />
+{% endblock %}
