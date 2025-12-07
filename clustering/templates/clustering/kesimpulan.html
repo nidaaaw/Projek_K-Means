@@ -1,15 +1,66 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>Kesimpulan Analisis</h2>
-<h2 class="mb-3">Hasil Clustering (K = {{ k }})</h2>
+
+<h2 class="mb-4">Kesimpulan Analisis K-Means (K = {{ k }})</h2>
+
+<!-- =============================== -->
+<!-- 1. GRAFIK BEFORE CLUSTERING -->
+<!-- =============================== -->
 <div class="card mb-4">
-    <div class="card-header bg-primary text-white">Visualisasi Cluster</div>
+    <div class="card-header bg-secondary text-white">Sebaran Data Awal</div>
     <div class="card-body text-center">
-        <img src="data:image/png;base64,{{ cluster_plot }}" class="img-fluid" />
+        <img src="data:image/png;base64,{{ plot_awal }}" class="img-fluid rounded">
     </div>
 </div>
 
-<p>Kesimpulan hasil K-Means berdasarkan clustering pelanggan Mall Customers.</p>
-{{ kesimpulan_text }}
+<!-- =============================== -->
+<!-- 2. ELBOW METHOD -->
+<!-- =============================== -->
+<div class="card mb-4">
+    <div class="card-header bg-warning text-dark">Elbow Method (Penentuan K Optimal)</div>
+    <div class="card-body text-center">
+        <img src="data:image/png;base64,{{ elbow_plot }}" class="img-fluid rounded">
+    </div>
+</div>
+
+<!-- =============================== -->
+<!-- 3. VISUALISASI CLUSTER -->
+<!-- =============================== -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">Visualisasi Cluster Akhir</div>
+    <div class="card-body text-center">
+        <img src="data:image/png;base64,{{ cluster_plot }}" class="img-fluid rounded">
+    </div>
+</div>
+
+<!-- =============================== -->
+<!-- 4. BAR CHART RATA-RATA CLUSTER -->
+<!-- =============================== -->
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">Rata-Rata Setiap Cluster</div>
+    <div class="card-body text-center">
+        <img src="data:image/png;base64,{{ summary_plot }}" class="img-fluid rounded">
+    </div>
+</div>
+
+<!-- =============================== -->
+<!-- 5. TABEL SUMMARY CLUSTER -->
+<!-- =============================== -->
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">Tabel Ringkasan Cluster</div>
+    <div class="card-body">
+        {{ summary|safe }}
+    </div>
+</div>
+
+<!-- =============================== -->
+<!-- 6. KESIMPULAN AKHIR OTOMATIS -->
+<!-- =============================== -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">Kesimpulan Akhir</div>
+    <div class="card-body">
+        <p>{{ kesimpulan_text }}</p>
+    </div>
+</div>
+
 {% endblock %}

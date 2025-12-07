@@ -158,9 +158,112 @@ def clustering(request):
 
 
 # =================================================
-# 4️⃣ KESIMPULAN
+# 4️⃣ KESIMPULAN LENGKAP DENGAN SEMUA VISUALISASI
 # =================================================
 def kesimpulan(request):
-    return render(request, 'clustering/kesimpulan.html', {
-        'kesimpulan_text': "Analisis K-Means telah berhasil dilakukan."
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    df = pd.read_csv(os.path.join(BASE_DIR, 'clustering', 'Mall_Customers.csv'))
+
+    df = df.rename(columns={
+        "Age": "age",
+        "Annual Income (k$)": "income",
+        "Spending Score (1-100)": "spending"
     })
+
+    X = df[['age', 'income', 'spending']].values
+    k = int(request.session.get("k", 3))
+
+    # Jalankan clustering
+    labels, centroids, wcss = kmeans(X, k)
+    df["cluster"] = labels
+
+    # ===========================================================
+    # 1. GRAFIK SEBARAN DATA AWAL (BEFORE CLUSTERING)
+    # ===========================================================
+    fig1, ax1 = plt.subplots()
+    ax1.scatter(df["income"], df["spending"])
+    ax1.set_title("Sebaran Data Awal (Before Clustering)")
+    ax1.set_xlabel("Pendapatan (Income)")
+    ax1.set_ylabel("Pengeluaran (Spending)")
+
+    buffer1 = BytesIO()
+    plt.savefig(buffer1, format="png")
+    plot_awal = base64.b64encode(buffer1.getvalue()).decode()
+    plt.close()
+
+    # ===========================================================
+    # 2. GRAFIK ELBOW METHOD UNTUK MENENTUKAN K OPTIMAL
+    # ===========================================================
+    wcss_list = []
+    for i in range(1, 10):
+        _, _, wcss_i = kmeans(X, i)
+        wcss_list.append(wcss_i)
+
+    fig2, ax2 = plt.subplots()
+    ax2.plot(range(1, 10), wcss_list, marker='o')
+    ax2.set_title("Elbow Method (WCSS vs K)")
+    ax2.set_xlabel("Jumlah Cluster (K)")
+    ax2.set_ylabel("WCSS")
+
+    buffer2 = BytesIO()
+    plt.savefig(buffer2, format="png")
+    elbow_plot = base64.b64encode(buffer2.getvalue()).decode()
+    plt.close()
+
+    # ===========================================================
+    # 3. VISUALISASI CLUSTER AKHIR
+    # ===========================================================
+    fig3, ax3 = plt.subplots()
+    for i in range(k):
+        ax3.scatter(X[labels == i, 1], X[labels == i, 2], label=f"Cluster {i}")
+
+    ax3.scatter(centroids[:, 1], centroids[:, 2], s=200, c="black", marker="X")
+    ax3.set_title("Visualisasi Cluster Akhir")
+    ax3.set_xlabel("Pendapatan (Income)")
+    ax3.set_ylabel("Pengeluaran (Spending)")
+    ax3.legend()
+
+    buffer3 = BytesIO()
+    plt.savefig(buffer3, format="png")
+    cluster_plot = base64.b64encode(buffer3.getvalue()).decode()
+    plt.close()
+
+    # ===========================================================
+    # 4. GRAPH BAR RATA-RATA CLUSTER
+    # ===========================================================
+    summary = df.groupby("cluster")[['age', 'income', 'spending']].mean()
+
+    fig4, ax4 = plt.subplots()
+    summary.plot(kind='bar', ax=ax4)
+    ax4.set_title("Rata-Rata Tiap Cluster")
+    ax4.set_xlabel("Cluster")
+    ax4.set_ylabel("Nilai Rata-Rata")
+
+    buffer4 = BytesIO()
+    plt.savefig(buffer4, format="png")
+    summary_plot = base64.b64encode(buffer4.getvalue()).decode()
+    plt.close()
+
+    # ===========================================================
+    # KESIMPULAN OTOMATIS
+    # ===========================================================
+    kesimpulan_text = f"""
+    Berdasarkan hasil analisis K-Means dengan jumlah cluster {k}, 
+    diperoleh pemisahan kelompok pelanggan yang memiliki karakteristik berbeda 
+    berdasarkan usia, pendapatan, dan tingkat pengeluaran. Visualisasi Before-Clustering 
+    menunjukkan sebaran awal data, sedangkan hasil clustering memperlihatkan pemisahan 
+    cluster yang lebih jelas. Elbow Method memperkuat pemilihan nilai K. Grafik rata-rata 
+    cluster memberikan gambaran bahwa tiap kelompok memiliki perilaku belanja dan tingkat 
+    pendapatan yang khas, sehingga dapat dimanfaatkan untuk strategi pemasaran yang tepat sasaran.
+    """
+
+    return render(request, 'clustering/kesimpulan.html', {
+        "plot_awal": plot_awal,
+        "elbow_plot": elbow_plot,
+        "cluster_plot": cluster_plot,
+        "summary_plot": summary_plot,
+        "k": k,
+        "summary": summary.to_html(classes="table table-bordered"),
+        "kesimpulan_text": kesimpulan_text
+    })
+
